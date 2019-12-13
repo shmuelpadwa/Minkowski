@@ -1,3 +1,5 @@
+# 2019, Shmuel Padwa
+
 from matplotlib.widgets import Button
 import matplotlib.pyplot as plt
 import numpy as np
