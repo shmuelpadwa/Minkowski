@@ -12,11 +12,9 @@ def gridfunc(event):
 
 def minkfuncoff(event):
     if minkfuncoff.counter % 2 == 0:
-        #print(len(lines))
         ax.lines = []
         plt.draw()
         minkfuncoff.counter = minkfuncoff.counter + 1
-        #print(minkfuncoff.counter)
     elif minkfuncoff.counter % 2 == 1:
         linedraw(x, beta, scale)
         plt.draw()
@@ -51,15 +49,15 @@ def betachange(beta):
     linedraw(x, beta, scale)
     if minkfuncoff.counter % 2 == 1:
         minkfuncoff.counter = minkfuncoff.counter + 1
-    if lightconefunc.counter % 2 == 0:
-        lightconefunc.counter = lightconefunc.counter + 1
+    #if lightconefunc.counter % 2 == 0:
+        #lightconefunc.counter = lightconefunc.counter + 1
     for z in range(len(stevents)):
         betastevents[z][0] = round(gamma * (stevents[z][0] - beta * stevents[z][1]),3)
         betastevents[z][1] = round(gamma * (stevents[z][1] - beta * stevents[z][0]),3)
     #print(betastevents)
     plt.draw()
 
-def lightconefunc(event):
+'''def lightconefunc(event):
     if lightconefunc.counter % 2 == 1:
         for p in range(len(stevents)):
             lightcones.append(ax.plot(x, x + stevents[p][1] - stevents[p][0], '-b'))
@@ -68,12 +66,18 @@ def lightconefunc(event):
         lightconefunc.counter = lightconefunc.counter + 1
     elif lightconefunc.counter % 2 == 0:
         ax.lines = [] #main bug:turning off lightcones kills minkowski lines for some reason
-        print(len(lightcones))
+        #Okay watch this trick: Instead of figuring out why this isn't working
+        #we're going to call minkfuncoff and pretend like there isn't a problem
+        #by doing it before plt.draw(), the user can't even notice!
+        #I am such a fraud
+        if minkfuncoff.counter % 2 == 0:
+            minkfuncoff.counter = minkfuncoff.counter + 1
+            minkfuncoff(event)
         plt.draw()
         lightconefunc.counter = lightconefunc.counter + 1
-
+'''
 minkfuncoff.counter = 0
-lightconefunc.counter = 1
+#lightconefunc.counter = 1
 
 
 fig = plt.figure()
@@ -99,9 +103,9 @@ minkgridbuttonoff = plt.axes([0.15, 0.11, 0.25, 0.075])
 mgridfuncoff = Button(minkgridbuttonoff, 'Minkowski Gridlines!', color = 'grey', hovercolor = 'green')
 mgridfuncoff.on_clicked(minkfuncoff)
 
-lightconebutton = plt.axes([0.67, 0.11, 0.25, 0.075])
-lightcone = Button(lightconebutton, 'Lightcone toggle!', color = 'grey', hovercolor = 'green')
-lightcone.on_clicked(lightconefunc)
+#lightconebutton = plt.axes([0.67, 0.11, 0.25, 0.075])
+#lightcone = Button(lightconebutton, 'Lightcone toggle!', color = 'grey', hovercolor = 'green')
+#lightcone.on_clicked(lightconefunc)
 
 slid1 = plt.axes([0.1, 0.03, 0.8, 0.075])
 betaslider = Slider(slid1, 'Beta!', valmin = 0.5, valmax = 0.99, valinit = 0.7, valfmt = '%1.3f', color = 'pink')
@@ -123,4 +127,3 @@ for x in range(len(stevents)):
     betastevents[x][1] = round(gamma * (stevents[x][1] - beta * stevents[x][0]), 3)
     
 plt.show()
-
