@@ -19,7 +19,6 @@ def minkfuncoff(event):
         beta = betaslider.val
         linedraw(x, beta, scale)
         plt.draw()
-        print(beta)
         minkfuncoff.counter = minkfuncoff.counter + 1
     
 def linedraw(x, beta, scale):
@@ -34,9 +33,7 @@ def onclick(event):
     if event.y > 95: 
         ax.scatter(event.xdata, event.ydata, s=30, color = 'red')
         stevents.append([round(event.xdata,3), round(event.ydata,3)])
-        #print(stevents)
         betastevents.append([round((gamma * (event.xdata - beta * event.ydata)),3), round((gamma * (event.ydata - beta * event.xdata)),3)])
-        #print(betastevents)
         fig.canvas.draw()
         ''' The y>95 line is needed because the code was throwing a very bizarre bug in which clicking
         * the minkowski or regular gridline buttons would plot a point on the grid
@@ -45,14 +42,15 @@ def onclick(event):
         *Fortunately, It can distinguish between x and y from the grid and buttons.
         '''
 
+
 def betachange(beta):
     beta = betaslider.val
     ax.lines = []
     linedraw(x, beta, scale)
     if minkfuncoff.counter % 2 == 1:
         minkfuncoff.counter = minkfuncoff.counter + 1
-    #if lightconefunc.counter % 2 == 0:
-        #lightconefunc.counter = lightconefunc.counter + 1
+    if lightconefunc.counter % 2 == 0:
+        lightconefunc.counter = lightconefunc.counter + 1
     for z in range(len(stevents)):
         betastevents[z][0] = round(gamma * (stevents[z][0] - beta * stevents[z][1]),3)
         betastevents[z][1] = round(gamma * (stevents[z][1] - beta * stevents[z][0]),3)
@@ -127,5 +125,6 @@ betastevents = []
 for x in range(len(stevents)):
     betastevents[x][0] = round(gamma * (stevents[x][0] - beta * stevents[x][1]), 3)
     betastevents[x][1] = round(gamma * (stevents[x][1] - beta * stevents[x][0]), 3)
-    
+
+
 plt.show()
