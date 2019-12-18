@@ -1,4 +1,4 @@
-# 2019, Shmuel Padwa
+#2019, Shmuel Padwa
 
 from matplotlib.widgets import Button, Slider
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ def linedraw(x, beta, scale):
 def onclick(event):
     #print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %(event.button, event.x, event.y, event.xdata, event.ydata))
     if event.y > 95: 
-        ax.scatter(event.xdata, event.ydata, s=30, color = 'red')
+        sc.append(ax.scatter(event.xdata, event.ydata, s=30, color = 'red'))
         stevents.append([round(event.xdata,3), round(event.ydata,3)])
         betastevents.append([round((gamma * (event.xdata - beta * event.ydata)),3), round((gamma * (event.ydata - beta * event.xdata)),3)])
         fig.canvas.draw()
@@ -41,6 +41,7 @@ def onclick(event):
         *It coulnd't distinguish between xdata and ydata from the grid and the buttons.
         *Fortunately, It can distinguish between x and y from the grid and buttons.
         '''
+        plt.draw()
 
 
 def betachange(beta):
@@ -125,6 +126,5 @@ betastevents = []
 for x in range(len(stevents)):
     betastevents[x][0] = round(gamma * (stevents[x][0] - beta * stevents[x][1]), 3)
     betastevents[x][1] = round(gamma * (stevents[x][1] - beta * stevents[x][0]), 3)
-
-
+sc = []
 plt.show()
