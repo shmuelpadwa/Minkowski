@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+lastAnnotation = None
 
 def gridfunc(event):
     ax.grid()
@@ -31,19 +32,39 @@ def linedraw(x, beta, scale):
 def onclick(event):
     #print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %(event.button, event.x, event.y, event.xdata, event.ydata))
     if event.y > 95: 
-        sc.append(ax.scatter(event.xdata, event.ydata, s=30, color = 'red'))
-        stevents.append([round(event.xdata,3), round(event.ydata,3)])
+        sc.append(ax.scatter(event.xdata, event.ydata, s=30, color = '#0000FF'))
+        stevents.append([round(event.xdata,3), round(event.ydata,3), chr(onclick.counter), round(event.x, 3), round(event.y, 3)])
         betastevents.append([round((gamma * (event.xdata - beta * event.ydata)),3), round((gamma * (event.ydata - beta * event.xdata)),3)])
+        onclick.counter = onclick.counter + 1
         fig.canvas.draw()
         ''' The y>95 line is needed because the code was throwing a very bizarre bug in which clicking
         * the minkowski or regular gridline buttons would plot a point on the grid
         *specifically the point at which you'd be clicking if the button was at (0,0)
         *It coulnd't distinguish between xdata and ydata from the grid and the buttons.
         *Fortunately, It can distinguish between x and y from the grid and buttons.
+        LAST BUG:
+        IN FULL SCREEN, MORE PIXELS - MORE PROBLEM
         '''
-        plt.draw()
+        plt.show()
 
+def hover(event):
+    global lastAnnotation
+    
+    if lastAnnotation is not None:
+        lastAnnotation.remove()
+        lastAnnotation = None
 
+    yeet = ""    
+    text = ""
+    for num in range(0, len(stevents)):
+        if stevents[num][3] - 15 < event.x and stevents[num][3] + 15 > event.x and stevents[num][4] - 15 < event.y and stevents[num][4] + 15 > event.y:
+            text = "Event " + str(stevents[num][2]) + "\n In S , coordinates are (" + str(stevents[num][0]) + ", " + str(stevents[num][1]) + "). \nIn S', coordinates are (" + str(betastevents[num][0]) + ", " + str(betastevents[num][1]) + ")."
+            
+            bbox_props = dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
+            lastAnnotation = ax.text(stevents[num][0] + 1, stevents[num][1] + 1, text, ha="center", va="bottom", size=8, bbox=bbox_props)
+            plt.show()
+    
+            
 def betachange(beta):
     beta = betaslider.val
     ax.lines = []
@@ -79,6 +100,7 @@ def lightconefunc(event):
 
 minkfuncoff.counter = 0
 lightconefunc.counter = 1
+onclick.counter = 65
 
 
 fig = plt.figure()
@@ -91,20 +113,22 @@ ax.spines['top'].set_color('none')
 ax.xaxis.set_ticks_position('bottom')
 ax.yaxis.set_ticks_position('left')
 
+offset = 0.13
+
 plt.xlim(-5, 5)
 plt.ylim(-10, 10)
 
 plt.subplots_adjust(bottom=0.2)
 
-gridbutton = plt.axes([0.41, 0.11, 0.25, 0.075])
+gridbutton = plt.axes([offset + 0.26, 0.11, 0.25, 0.075])
 bgridfunc = Button(gridbutton, 'Regular Gridlines!', color = 'grey', hovercolor = 'green')
 bgridfunc.on_clicked(gridfunc)
 
-minkgridbuttonoff = plt.axes([0.15, 0.11, 0.25, 0.075])
+minkgridbuttonoff = plt.axes([offset, 0.11, 0.25, 0.075])
 mgridfuncoff = Button(minkgridbuttonoff, 'Minkowski Gridlines!', color = 'grey', hovercolor = 'green')
 mgridfuncoff.on_clicked(minkfuncoff)
 
-lightconebutton = plt.axes([0.67, 0.11, 0.25, 0.075])
+lightconebutton = plt.axes([offset + 0.52, 0.11, 0.25, 0.075])
 lightcone = Button(lightconebutton, 'Lightcone toggle!', color = 'grey', hovercolor = 'green')
 lightcone.on_clicked(lightconefunc)
 
@@ -113,6 +137,7 @@ betaslider = Slider(slid1, 'Beta!', valmin = 0.5, valmax = 0.99, valinit = 0.7, 
 betaslider.on_changed(betachange)
 
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
+cid2 = fig.canvas.mpl_connect('motion_notify_event', hover)
 
 beta = betaslider.val
 scale = math.sqrt((1 + beta ** 2) / (1 - beta ** 2))
@@ -126,5 +151,8 @@ betastevents = []
 for x in range(len(stevents)):
     betastevents[x][0] = round(gamma * (stevents[x][0] - beta * stevents[x][1]), 3)
     betastevents[x][1] = round(gamma * (stevents[x][1] - beta * stevents[x][0]), 3)
+
 sc = []
+anns = []
+
 plt.show()
