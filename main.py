@@ -4,6 +4,8 @@ from matplotlib.widgets import Button, Slider
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import sys
+sys.setrecursionlimit(1500)
 
 lastAnnotation = None
 
@@ -23,15 +25,15 @@ def minkfuncoff(event):
         minkfuncoff.counter = minkfuncoff.counter + 1
     
 def linedraw(x, beta, scale):
-    lines.append(ax.plot(x, beta*x, '-r', label='ct prime axis'))
-    lines.append(ax.plot(x, (1/beta)*x,'-..g', label='x prime axis'))
+    lines.append(ax.plot(x, beta*x, '-r', label='ct prime axis', linewidth = 6.0))
+    lines.append(ax.plot(x, (1/beta)*x,'-g', label='x prime axis', linewidth = 6.0))
     for y in np.arange(-10 * scale, 10 * scale, scale):
         lines.append(ax.plot(x, beta*x + y, '-r', label=y))
         lines.append(ax.plot(x, (1/beta)*x + y, '-..g', label=y))
 
 def onclick(event):
     #print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %(event.button, event.x, event.y, event.xdata, event.ydata))
-    if event.y > 95: 
+    if event.y > 95:
         sc.append(ax.scatter(event.xdata, event.ydata, s=30, color = '#0000FF'))
         stevents.append([round(event.xdata,3), round(event.ydata,3), chr(onclick.counter), round(event.x, 3), round(event.y, 3)])
         betastevents.append([round((gamma * (event.xdata - beta * event.ydata)),3), round((gamma * (event.ydata - beta * event.xdata)),3)])
