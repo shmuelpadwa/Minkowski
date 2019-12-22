@@ -44,8 +44,6 @@ def onclick(event):
         *specifically the point at which you'd be clicking if the button was at (0,0)
         *It coulnd't distinguish between xdata and ydata from the grid and the buttons.
         *Fortunately, It can distinguish between x and y from the grid and buttons.
-        LAST BUG:
-        IN FULL SCREEN, MORE PIXELS - MORE PROBLEM
         '''
         plt.show()
 
